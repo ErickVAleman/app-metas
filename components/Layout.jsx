@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import { withStyles, AppBar, Toolbar, IconButton, Typography, Drawer, Divider } from '@material-ui/core';
+import { withStyles, AppBar, Toolbar, IconButton, Typography, Drawer, Divider, Grid } from '@material-ui/core';
 import { Menu, Dashboard, Feedback, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon } from '@material-ui/icons'
 import MyMennu from './MyMenu'
 const drawerWidth = 240;
@@ -8,7 +8,6 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 440,
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
@@ -37,7 +36,7 @@ const styles = theme => ({
     display: 'none',
   },
   drawerPaper: {
-    position: 'relative',
+    position: 'fixed',
     whiteSpace: 'nowrap',
     width: drawerWidth,
     transition: theme.transitions.create('width', {
@@ -66,16 +65,33 @@ const styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3,
+    padding: theme.spacing.unit * 1.5,
+    minHeight: '96vh',
+  },
+  contentShift: {
+    transition: theme.transitions.create('margin', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+  },
+  'contentShift-left': {
+    marginLeft: drawerWidth,
+  },
+  'content-left': {
+    marginLeft: theme.spacing.unit * 7,
+    [theme.breakpoints.up('sm')]: {
+      marginLeft: theme.spacing.unit * 9,
+    },
   },
 });
+
 const MyLayout = ({ children, classes, theme, handleDrawerOpen, handleDrawerClose, stateOpen }) => (
   <div className={classes.root}>
-    <AppBar position='absolute'
+    <AppBar position='fixed'
       className={classNames(classes.appBar,  stateOpen && classes.appBarShift)}
     >
       <Toolbar disableGutters={!stateOpen} >
-        <IconButton color='inherit' aria-label='Open' onClick={handleDrawerOpen} 
+        <IconButton color='inherit' aria-label='Open' onClick={handleDrawerOpen}
            className={classNames(classes.menuButton, stateOpen && classes.hide)}
         >
           <Menu />
@@ -89,6 +105,7 @@ const MyLayout = ({ children, classes, theme, handleDrawerOpen, handleDrawerClos
       classes={{
         paper: classNames(classes.drawerPaper, !stateOpen && classes.drawerPaperClose),
       }}
+      containerStyle={{height: 'calc(100% - 64px)'}}
     >
       <div className={classes.toolbar}>
         <IconButton onClick={handleDrawerClose} >
@@ -97,15 +114,20 @@ const MyLayout = ({ children, classes, theme, handleDrawerOpen, handleDrawerClos
       </div>
       <Divider />
       <MyMennu Linkto='/' text='Dashboard' itemIcon={<Dashboard style={{color:'rgb(14, 119, 197)'}} />} />
-      <MyMennu Linkto='/feedback' itemIcon={<Feedback style={{color:'rgb(14, 119, 197)'}} />} />
+      <MyMennu Linkto='/feedback' text='Feedback' itemIcon={<Feedback style={{color:'rgb(14, 119, 197)'}} />} />
     </Drawer>
-    <main className={classes.content} >
+    <main className={classNames(classes.content, {
+              [classes[`content-left`]]: !stateOpen,
+              [classes.contentShift]: stateOpen,
+              [classes[`contentShift-left`]]: stateOpen,
+            })} >
       <div className={classes.toolbar} />
-      {children}
+        {children}
     </main>
-    <style global jsx>{`  
-      body {
+    <style global jsx>{`
+      html, body {
         margin: 0px;
+        height: 100%;
       }
     `}</style>
   </div>
@@ -117,7 +139,7 @@ MyLayout.propType = {
   handleDrawerOpen: PropTypes.func.isRequired,
   handleDrawerClose: PropTypes.func.isRequired,
   stateOpen: PropTypes.bool,
-  
+
 }
 
 export default withStyles(styles, { withTheme: true })(MyLayout)

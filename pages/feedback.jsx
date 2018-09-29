@@ -1,30 +1,54 @@
 import React, { Component } from 'react';
-import MyLayout from '../components/Layout'
-import { Typography } from '@material-ui/core'
+import MyLayout from '../components/Layout';
+import FloatBottom from '../components/floatButton';
+import { Typography, Grid, Paper, withStyles, Divider } from '@material-ui/core';
+import PropTypes from 'prop-types';
+
+const styles = theme => ({
+  root: {
+    flexGrow: 1
+  },
+  paper: {
+    padding: theme.spacing.unit * 2,
+    color: theme.palette.text.secondary,
+  }
+})
+
 class Feedback extends Component {
   state = {
-    open : false
+    open: false
   }
-  handleDrawerOpen () {
-    this.setState({open: true})
+  handleDrawerOpen() {
+    this.setState({ open: true })
   }
-  handleDrawerClose () {
-    this.setState({open: false})
+  handleDrawerClose() {
+    this.setState({ open: false })
   }
-  render(){
-    return(
-      <MyLayout stateOpen={this.state.open} handleDrawerOpen={() => this.handleDrawerOpen()} handleDrawerClose={() => this.handleDrawerClose()}  >
-        <Typography variant='title' color='textPrimary' >
-          Feedback
-        </Typography>
-        <ul>
-          <li>Nombre de la tienda</li>
-          <li>Timer para llegar a la meta</li>
-          <li>grafico de estadisticas</li>
-        </ul>
+  render() {
+    const { classes } = this.props
+    return (
+      <MyLayout stateOpen={this.state.open} 
+        handleDrawerOpen={() => this.handleDrawerOpen()}
+        handleDrawerClose={() => this.handleDrawerClose()}
+      >
+        <Grid container spacing={16} >
+          <Grid item xs={12} >
+            <Paper className={classes.paper} >
+              <Typography variant='title' color='primary' >
+                Feedback
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+        <FloatBottom />
       </MyLayout>
     )
   }
 }
 
-export default Feedback
+
+Feedback.propTypes = {
+  classes: PropTypes.object.isRequired
+}
+
+export default withStyles(styles)(Feedback)
